@@ -1,0 +1,76 @@
+---
+title: "Mastering Shiny - Chapter 2"
+output: html_notebook
+---
+
+2.2.8.1) When space is at a premium, it’s useful to label text boxes using a placeholder that appears inside the text entry area. How do you call textInput() to generate the UI below?
+
+```{r}
+shiny::textInput("name", placeholder = "Your name")
+```
+
+2.2.8.2) Carefully read the documentation for sliderInput() to figure out how to create a date slider, as shown below.
+
+```{r}
+shiny::sliderInput("name", "When should we deliver?", min = as.Date("2020-09-16", "%Y-%m-%d"), max = as.Date("2020-09-23", "%Y-%m-%d"), value = as.Date("2020-09-17"), step = 1)
+```
+
+2.2.8.3) Create a slider input to select values between 0 and 100 where the interval between each selectable value on the slider is 5. Then, add animation to the input widget so when the user presses play the input widget scrolls through the range automatically.
+
+```{r}
+shiny::sliderInput("name", "Select a value between 0 and 100", min = 0, max = 100, step = 5, animate = TRUE)
+```
+
+2.2.8.4) If you have a moderately long list in a selectInput(), it’s useful to create sub-headings that break the list up into pieces. Read the documentation to figure out how. (Hint: the underlying HTML is called <optgroup>.)
+
+```{r}
+shiny::selectInput("name", "Select a value", choices = list("Spanish Speaking" = c("Argentina", "Brasil", "Bolivia"), 
+                                                            "Non Spanish Speakers" = c("Germany", "UK", "Rusia")))
+```
+
+2.3.5.1) Which of textOutput() and verbatimTextOutput() should each of the following render functions be paired with?
+
+renderPrint(summary(mtcars)): verbatimTextOutput()
+
+renderText("Good morning!"): textOutput()
+
+renderPrint(t.test(1:5, 2:6)): verbatimTextOutput()
+
+renderText(str(lm(mpg ~ wt, data = mtcars))): textOutput()
+
+2.3.5.2) Re-create the Shiny app from Section 2.3.3, this time setting height to 300px and width to 700px. Set the plot “alt” text so that a visually impaired user can tell that its a scatterplot of five random numbers.
+
+```{r}
+ui <- fluidPage(
+  plotOutput("plot", width = "700px", height = "300px", alt)
+)
+server <- function(input, output, session) {
+  output$plot <- renderPlot(plot(1:5), res = 96,
+                            alt = "Scatterplot of five random numbers") #see https://github.com/rstudio/shiny/pull/3006
+}
+```
+
+2.3.5.3) Update the options in the call to renderDataTable() below so that the data is displayed, but all other controls are suppress (i.e. remove the search, ordering, and filtering commands).
+
+```{r}
+ui <- fluidPage(
+  dataTableOutput("table")
+)
+server <- function(input, output, session) {
+  output$table <- renderDataTable(mtcars, options = list(pageLength = 5,
+                                                         searching = FALSE,
+                                                         ordering = FALSE)) #¿Filtering?
+}
+```
+
+2.3.5.4) Alternatively, read up on reactable, and convert the above app to use it instead.
+
+```{r}
+ui <- fluidPage(
+  dataTableOutput("table")
+)
+server <- function(input, output, session) {
+  output$table <- renderReactable(mtcars) 
+}
+```
+
