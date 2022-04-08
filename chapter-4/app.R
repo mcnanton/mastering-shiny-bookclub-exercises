@@ -52,12 +52,12 @@ server <- function(input, output, session) {
   
   selected <- reactive(injuries %>% filter(prod_code == input$code))
   
-  inic_log_sampleos <- reactive(
+  inic_log_sampleos <- reactive({
     vector(mode = "list", length = nrow(selected()))
-    )
+  })
   
   log_sampleos <- reactive({
-    inic_log_sampleos %>% 
+    inic_log_sampleos() %>% 
       append(sampleo())
   })
   
