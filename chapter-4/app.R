@@ -52,7 +52,7 @@ server <- function(input, output, session) {
   
   selected <- reactive({
     injuries %>% filter(prod_code == input$code)
-    })
+    })l
   
   inic_log_sampleos <- reactive({
     vector(mode = "list", length = nrow(selected()))
