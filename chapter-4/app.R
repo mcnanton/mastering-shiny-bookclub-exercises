@@ -8,7 +8,6 @@ products <- vroom::vroom("neiss/products.tsv")
 population <- vroom::vroom("neiss/population.tsv")
 
 set.seed(10)
-log_sampleos <- vector(mode = "list", length = nrow(selected()))
 
 prod_codes <- setNames(products$prod_code, products$title)
 #This is a convenience function that sets the names on an object and returns the object. 
@@ -51,8 +50,14 @@ server <- function(input, output, session) {
       summarise(n = as.integer(sum(weight)))
   }
   
+  selected <- reactive(injuries %>% filter(prod_code == input$code))
+  
+  inic_log_sampleos <- reactive(
+    vector(mode = "list", length = nrow(selected()))
+    )
+  
   log_sampleos <- reactive({
-    log_sampleos %>% 
+    inic_log_sampleos %>% 
       append(sampleo())
   })
   
@@ -70,8 +75,6 @@ server <- function(input, output, session) {
   )
   
   output$narrative <- renderText(narrative_sample())
-  
-  selected <- reactive(injuries %>% filter(prod_code == input$code))
   
   output$diag <- renderTable(count_top(selected(), diag), width = "100%")
   
