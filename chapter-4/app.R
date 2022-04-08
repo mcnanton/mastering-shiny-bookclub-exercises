@@ -34,8 +34,9 @@ ui <- fluidPage(
     column(12, plotOutput("age_sex"))
   ),
   fluidRow(
-    column(2, actionButton("story", "Tell me a story")),
-    column(10, textOutput("narrative"))
+    column(2, actionButton("story_prev", "Go back")),
+    column(2, actionButton("story_next", "Tell me a story")),
+    column(8, textOutput("narrative"))
   )
 )
 
@@ -49,10 +50,23 @@ server <- function(input, output, session) {
       summarise(n = as.integer(sum(weight)))
   }
   
-
+  log_sampleos <- reactive({
+    vector(mode = "list", length = nrow(selected()))
+   %>% append(sampleo())
+  })
+  
   narrative_sample <- eventReactive(
-    list(input$story, selected()),
-      selected() %>% pull(narrative) %>% sample(1))
+    sampleo <- sample(seq(1,nrow(selected()))),
+    
+    list(input$story_next, selected()),
+    
+    selected() %>% filter(row_number == sampleo) %>% select(narrative)
+    )
+  
+  narrative_sample <- eventReactive(
+    list(input$story_prev, selected()),
+    selected() %>% filter(row_number == tail(log_sampleos,1)) %>% select(narrative)
+  )
   
   output$narrative <- renderText(narrative_sample())
   
