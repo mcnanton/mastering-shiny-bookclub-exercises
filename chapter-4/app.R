@@ -8,6 +8,7 @@ products <- vroom::vroom("neiss/products.tsv")
 population <- vroom::vroom("neiss/population.tsv")
 
 set.seed(10)
+log_sampleos <- vector(mode = "list", length = nrow(selected()))
 
 prod_codes <- setNames(products$prod_code, products$title)
 #This is a convenience function that sets the names on an object and returns the object. 
@@ -51,8 +52,8 @@ server <- function(input, output, session) {
   }
   
   log_sampleos <- reactive({
-    vector(mode = "list", length = nrow(selected()))
-   %>% append(sampleo())
+    log_sampleos %>% 
+      append(sampleo())
   })
   
   narrative_sample <- eventReactive(
