@@ -50,7 +50,9 @@ server <- function(input, output, session) {
       summarise(n = as.integer(sum(weight)))
   }
   
-  selected <- reactive(injuries %>% filter(prod_code == input$code))
+  selected <- reactive({
+    injuries %>% filter(prod_code == input$code)
+    })
   
   inic_log_sampleos <- reactive({
     vector(mode = "list", length = nrow(selected()))
@@ -66,7 +68,7 @@ server <- function(input, output, session) {
     
     list(input$story_next, selected()),
     
-    selected() %>% filter(row_number == sampleo) %>% select(narrative)
+    selected() %>% filter(row_number == sampleo()) %>% select(narrative)
     )
   
   narrative_sample <- eventReactive(
