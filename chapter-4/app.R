@@ -63,13 +63,17 @@ server <- function(input, output, session) {
       append(sampleo())
   })
   
+  sampleo <- eventReactive(
+    list(input$story_next, selected()),
+    reactive(sample(seq(1,nrow(selected()))))
+  )
+  
   narrative_sample <- eventReactive(
-    sampleo <- sample(seq(1,nrow(selected()))),
     
     list(input$story_next, selected()),
     
     selected() %>% filter(row_number == sampleo()) %>% select(narrative)
-    )
+  )
   
   narrative_sample <- eventReactive(
     list(input$story_prev, selected()),
